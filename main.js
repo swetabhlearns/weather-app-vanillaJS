@@ -141,15 +141,11 @@ function debounce(func) {
   let timer;
   return (...args) => {
     clearTimeout(timer);
-    time = setTimeout =
-      (() => {
-        console.log("debounce");
-        func.apply(this, args);
-      },
-      500);
+    timer = setTimeout(() => {
+      func.apply(this, args);
+    }, 500);
   };
 }
-const debounceSearch = debounce((event) => onSearchChange(event));
 
 const onSearchChange = async (event) => {
   let { value } = event.target;
@@ -170,6 +166,7 @@ const onSearchChange = async (event) => {
     document.querySelector("#cities").innerHTML = options;
   }
 };
+const debounceSearch = debounce((event) => onSearchChange(event));
 
 loadForecastUsingGeoLocation = () => {
   navigator.geolocation.getCurrentPosition(
@@ -195,7 +192,6 @@ const loadData = async () => {
 handleCitySelection = (event) => {
   selectedCityText = event.target.value;
   let options = document.querySelectorAll("#cities > option");
-  console.log(options);
   if (options?.length) {
     let selectedOption = Array.from(options).find(
       (opt) => opt.value === selectedCityText
@@ -208,5 +204,5 @@ document.addEventListener("DOMContentLoaded", async () => {
   loadForecastUsingGeoLocation();
   const searchInput = document.querySelector("#search");
   searchInput.addEventListener("change", handleCitySelection);
-  searchInput.addEventListener("input", onSearchChange);
+  searchInput.addEventListener("input", debounceSearch);
 });
